@@ -23,18 +23,19 @@ def create_person() -> None:
         if continuar == 0:
             break
 
-def select_ticket(id: int, group=False) -> bool:
+def select_ticket(group=False) -> bool:
     '''
     grava um ticket escolhido com os dados de uma pessoa num banco de dados
 
     param:
-        id: é o número de identificação unico para cada pessoa ja registrada
         group: identifica se é um grupo de bilhetes ou bilhetes individuais
             (obs: se grupo = True todos serão tratados como pago ou não pago)
 
     return:
         retorna True caso não ocorra erros e False caso alguma condição não for completada
     '''
+    nome = input('Digite o nome da pessoa: ')
+    id = db_pessoa.get_by_name(nome)[0][3]
     if not group:
         while True:
             num = int(input('Digite o numero do ticket: '))
@@ -58,7 +59,7 @@ def select_ticket(id: int, group=False) -> bool:
         bilhetes = []
         num_bilhetes = int(input('Digite a quantidade de bilhetes: '))
         for i in range(num_bilhetes):
-            bilhete = int(input('Digite o numero do bilhete'))
+            bilhete = int(input('Digite o numero do bilhete: '))
             bilhetes.append(bilhete)
 
         pagamento = int(input('Pago? [0] NÃO [1] SIM\n--->'))
@@ -143,6 +144,94 @@ def get_all(nome: str, length=False) -> Union[list, bool]:
 
     return False
 
+def update_ticket(num: int, group=False) -> bool:
+    '''
+    atualiza os dados de um bilhete, caso houver devolução ou pagamento de um bilhete não pago
+
+    param:
+        num: o numero do bilhete
+
+    return:
+        retorna True quando a atualização é bem sucedida e False quando ocorre algum erro
+    '''
+    bilhete = db_num.get_by_number(num)
+    bilhetes = []
+
+    if group:
+        qnt_bilhetes = int(input('Digite a quantidade de bilhetes'))
+        for _ in range(qnt_bilhetes):
+            num_bilhetes = int(input('Digite o numero do bilhete: '))
+            bilhetes.append(num_bilhetes)
+
+    print('O que deseja alterar?')
+    print('[0] ID\n[1] PAGAMENTO\n[2] ID e PAGAMENTO')
+    opcao = int(input('--->'))
+
+    if opcao in [0, 1, 2]:
+        if opcao == 0:
+            nome = input('Digite o nome do novo dono: ')
+            if db_pessoa.get_by_name(nome):
+                if not group:
+                    novo_id = db_pessoa.get_by_name(nome)[0][3]
+                    _, _, situacao = bilhete
+                    db_num.delete_number(num)
+                    novo_bilhete = novo_id, num, situacao
+                    db_num.insert_one(novo_bilhete)
+
+                    return True
+                else:
+                    novo_id = db_pessoa.get_by_name(nome)[0][3]
+                    _, _, situacao = bilhete
+                    for n in bilhetes:
+                        db_num.delete_number(n)
+                        novo_bilhete = novo_id, n, situacao
+                        db_num.insert_one(novo_bilhete)
+
+                    return True
+            return False
+
+        elif opcao == 1:
+            nova_situacao = int(input('Digite a nova situação do pagamento: '))
+            if nova_situacao in [0, 1]:
+                if not group:
+                    id, _, _ = bilhete
+                    db_num.delete_number(num)
+                    novo_bilhete = id, num, nova_situacao
+                    db_num.insert_one(novo_bilhete)
+
+                    return True
+                else:
+                    for n in bilhetes:
+                        id, _, _ = bilhete
+                        db_num.delete_number(n)
+                        novo_bilhete = id, n, nova_situacao
+                        db_num.insert_one(novo_bilhete)
+
+                    return True
+            return False
+
+        else:
+            nome = input('Digite o nome do novo dono: ')
+            nova_situacao = int(input('Digite a nova situação do pagamento: '))
+            if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
+                if not group:
+                    novo_id = db_pessoa.get_by_name(nome)[0][3]
+                    db_num.delete_number(num)
+                    novo_bilhete = novo_id, num, nova_situacao
+                    db_num.insert_one(novo_bilhete)
+
+                    return True
+                else:
+                    for n in bilhetes:
+                        novo_id = db_pessoa.get_by_name(nome)[0][3]
+                        db_num.delete_number(n)
+                        novo_bilhete = novo_id, n, nova_situacao
+                        db_num.insert_one(novo_bilhete)
+
+                    return True
+            return False
+
+    return False
 
 
 if __name__ == '__main__':
