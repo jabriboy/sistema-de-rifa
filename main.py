@@ -26,27 +26,3 @@ class RifaApp(App):
 rifa = RifaApp()
 rifa.run()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#print(db_num.get_by_id(25))
-#print(db_pessoa.get_by_id(25))
-#print(db_num.get_by_number(777))
-
-#print(db_num.get_by_number(3363))
-
-#print(count_tickets(pagos=True))
-

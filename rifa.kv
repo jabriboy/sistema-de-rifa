@@ -3,37 +3,76 @@ Menu:
 <Menu>:
     BoxLayout:
         orientation: 'vertical'
+        size_hint: .95, .98
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        Label:
+            text: 'Criar Pessoa'
+        GridLayout:
+            cols: 2
+            
+            Label:
+                text: 'nome'
+            TextInput:
+            
+            Label:
+                text: 'telefone'
+            TextInput:
 
-        GridLayout:
-            cols: 2
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: 'Criar Pessoa'
-                Button:
-                    text: 'Criar'
-            BoxLayout:
-                orientation: 'vertical'
-        
-        GridLayout:
-            cols: 2
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: 'Add bilhetes'
-                Button:
-                    text: 'Adicionar'
-            BoxLayout:
-                orientation: 'vertical'
 
+            Label:
+                text: 'Email'
+            TextInput:
+
+        Button:
+            text: 'Criar'
+            size_hint: .5, .3
+            pos_hint: {'center_x': .5}
+
+        Label:
+            text: 'Adicionar Bilhetes'
         GridLayout:
             cols: 2
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: 'Atualizar Bilhetes'
-                Button:
-                    text: 'Atualizar'
-            BoxLayout:
-                orientation: 'vertical'
+            Label:
+                text: 'nome'
+            TextInput:
+
+            Label:
+                text: 'Grupo'
+            Switch:
+            
+            Label:
+                text: 'Quantidade'
+            TextInput:
+
+            Label:
+                text: 'Bilhetes'
+            TextInput:
+
+        Button:
+            text: 'Adicionar'
+            size_hint: .5, .3
+            pos_hint: {'center_x': .5}
+
+        Label:
+            text: 'Atualizar Bilhetes'
+        GridLayout:
+            cols: 2
+            
+            Label:
+                text: 'nome'
+            TextInput:
+            
+            Label:
+                text: 'telefone'
+            TextInput:
+
+
+            Label:
+                text: 'Email'
+            TextInput:
+
+        Button:
+            text: 'Atualizar'
+            size_hint: .5, .3
+            pos_hint: {'center_x': .5}
 
