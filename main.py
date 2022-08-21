@@ -1,28 +1,23 @@
-from functions import *
+import functions as func
 from kivy.app import App
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.properties import (
+    ObjectProperty,
+    StringProperty,
+    NumericProperty
+)
 
 class Menu(RelativeLayout):
-    pass
+    nome = StringProperty('')
+    tel = StringProperty('')
+    bilhete = NumericProperty('')
+
+    def create_person(self):
+        func.create_person(self.nome, self.tel)
 
 class RifaApp(App):
     pass
 
 
-# add pessoa num banco de dados
-
-#create_person()
-
-
-# faz a conexão da pessoa com os bilhetes da rifa
-
-#select_ticket(group=True)
-
-
-# atualiza dados dos bilhetes
-
-#update_ticket(49, group=True)
-
 rifa = RifaApp()
 rifa.run()
-

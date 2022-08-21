@@ -6,22 +6,17 @@ from typing import Union
 import data_base as db_num
 import data_base_pessoa as db_pessoa
 
-def create_person() -> None:
+def create_person(nome: str, tel: str) -> None:
     '''
     Cria e grava os dados de uma pessoa num banco de dados
     '''
-    while True:
-        nome = input('Digite o nome: ')
-        tel = input('Digite o telefone: ')
-        email = input('Digite email: ')
+    email = ''
 
-        id = len(db_pessoa.get_all())
+    id = len(db_pessoa.get_all())
 
-        db_pessoa.insert_one([nome, tel, email, id])
+    db_pessoa.insert_one([nome, tel, email, id])
 
-        continuar = int(input('deseja continuar? [0] NÃO [1 SIM]\n-->'))
-        if continuar == 0:
-            break
+        
 
 def select_ticket(group=False) -> bool:
     '''

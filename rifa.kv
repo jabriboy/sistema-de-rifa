@@ -13,20 +13,18 @@ Menu:
             Label:
                 text: 'nome'
             TextInput:
-            
+                multiline: False
+
             Label:
                 text: 'telefone'
             TextInput:
-
-
-            Label:
-                text: 'Email'
-            TextInput:
+                multiline: False
 
         Button:
             text: 'Criar'
             size_hint: .5, .3
             pos_hint: {'center_x': .5}
+            on_release: root.create_person()
 
         Label:
             text: 'Adicionar Bilhetes'
@@ -35,6 +33,7 @@ Menu:
             Label:
                 text: 'nome'
             TextInput:
+                multiline: False
 
             Label:
                 text: 'Grupo'
@@ -43,6 +42,7 @@ Menu:
             Label:
                 text: 'Quantidade'
             TextInput:
+                multiline: False
 
             Label:
                 text: 'Bilhetes'
