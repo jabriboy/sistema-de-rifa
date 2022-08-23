@@ -201,8 +201,8 @@ def update_ticket(num: int, group=False) -> bool:
 
                     return True
                 else:
+                    id, _, _ = bilhete
                     for n in bilhetes:
-                        id, _, _ = bilhete
                         db_num.delete_number(n)
                         novo_bilhete = id, n, nova_situacao
                         db_num.insert_one(novo_bilhete)
