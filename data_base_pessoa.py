@@ -31,15 +31,19 @@ def get_by_name(name: str):
 
 def get_by_id(id: int):
     c.execute("SELECT * FROM pessoa_database WHERE id = :id", {'id': id})
-    return c.fetchall()
+    return c.fetchone()
 
 def get_by_number(rifa_num: int):
     c.execute("SELECT * FROM pessoa_database WHERE numbers = :numbers", {'numbers': rifa_num})
     return c.fetchone()
 
-def delete_person(person_name):
+def delete_by_name(person_name):
     with conn:
         c.execute("DELETE from pessoa_database WHERE name = :name", {'name': person_name})
+
+def delete_by_id(person_id):
+    with conn:
+        c.execute("DELETE from pessoa_database WHERE id = :id", {'id': person_id})
 
 def get_all():
     with conn:

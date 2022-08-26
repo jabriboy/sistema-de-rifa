@@ -233,6 +233,48 @@ def update_ticket(num: int, group=False) -> bool:
 
     return False
 
+def update_pessoa(id: int) -> Union[tuple, bool]:
+    nome, tel, email, _ = db_pessoa.get_by_id(id)
+    print('O que deseja mudar?')
+    print('[0] NOME\n[1] telefone\n[2] email\n[3] TUDO')
+    opcao = int(input('--->'))
+
+    if opcao == 0:
+        novo_nome = input('Digite o novo nome: ')
+        nova_pessoa = novo_nome, tel, email, id
+        db_pessoa.delete_by_id(id)
+        db_pessoa.insert_one(nova_pessoa)
+
+        return nova_pessoa
+
+    elif opcao == 1:
+        novo_tel = input('Digite o novo telefone: ')
+        nova_pessoa = nome, novo_tel, email, id
+        db_pessoa.delete_by_id(id)
+        db_pessoa.insert_one(nova_pessoa)
+
+        return nova_pessoa
+
+    elif opcao == 2:
+        novo_email = input('Digite o novo email: ')
+        nova_pessoa = nome, tel, novo_email, id
+        db_pessoa.delete_by_id(id)
+        db_pessoa.insert_one(novo_email)
+
+        return nova_pessoa
+
+    elif opcao == 3:
+        novo_nome = input('Digite o novo nome: ')
+        novo_tel = input('Digite o novo telefone: ')
+        novo_email = input('Digite o novo email: ')
+        nova_pessoa = novo_nome, novo_tel, novo_email, id
+        db_pessoa.delete_by_id(id)
+        db_pessoa.insert_one(nova_pessoa)
+
+        return nova_pessoa
+
+    return False
+
 
 if __name__ == '__main__':
     print(__doc__)
