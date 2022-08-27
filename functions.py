@@ -10,20 +10,13 @@ def create_person() -> None:
     '''
     Cria e grava os dados de uma pessoa num banco de dados
     '''
-    while True:
-        nome = input('Digite o nome: ')
-        tel = input('Digite o telefone: ')
-        email = input('Digite email: ')
+    nome = input('Digite o nome: ')
+    tel = input('Digite o telefone: ')
 
-        id = len(db_pessoa.get_all())
+    id = len(db_pessoa.get_all())
+    db_pessoa.insert_one([nome, tel, '', id])
 
-        db_pessoa.insert_one([nome, tel, email, id])
-
-        continuar = int(input('deseja continuar? [0] NÃO [1 SIM]\n-->'))
-        if continuar == 0:
-            break
-
-def select_ticket(group=False) -> bool:
+def select_ticket() -> bool:
     '''
     grava um ticket escolhido com os dados de uma pessoa num banco de dados
 
@@ -35,27 +28,9 @@ def select_ticket(group=False) -> bool:
         retorna True caso não ocorra erros e False caso alguma condição não for completada
     '''
     nome = input('Digite o nome da pessoa: ')
-    id = db_pessoa.get_by_name(nome)[0][3]
-    if not group:
-        while True:
-            num = int(input('Digite o numero do ticket: '))
-            if db_num.get_by_number(num)[0] == None or db_num.get_by_id(id) == []:
-                pagamento = int(input('Pago? [0] NÃO [1] SIM\n--->'))
-                if pagamento in [0, 1]:
-                    db_num.delete_number(num)
-                    pessoa_num = [id, num, pagamento]
-                    db_num.insert_one(pessoa_num)
-                    print('Bilhete cadastrado com sucesso')
-                else:
-                    return False
-            else:
-                print('Número ja escolhido')
-                return False
-        
-            continuar = int(input('deseja continuar? [0] NÃO [1 SIM]\n-->'))
-            if continuar == 0:
-                return False
-    else:
+    
+    if nome in db_pessoa.get_by_name(nome):
+        id = db_pessoa.get_by_name(nome)[0][3]
         bilhetes = []
         num_bilhetes = int(input('Digite a quantidade de bilhetes: '))
         for i in range(num_bilhetes):
@@ -73,6 +48,15 @@ def select_ticket(group=False) -> bool:
                 else:
                     print('Número ja escolhido')
                     return False
+        else:
+            return False
+    else:
+        print('pessoa não cadastrada')
+        print('deseja criar um novo cadastro?')
+        print('[1] SIM\n[2] NÃO')
+        continuar = int(input('--->'))
+        if continuar == 1:
+            create_person()
         else:
             return False
     
@@ -100,12 +84,9 @@ def count_tickets(pagos=False) -> int:
 
     return count
 
-def verify_ticket(num: int) -> str:
+def verify_ticket() -> str:
     '''
     Verifica as informações de um determinado bilhete
-
-    param:
-        num: é o numero do bilhete
 
     return:
         retorna um a tupla com as informações do bilhete (id, num, pago)
@@ -113,26 +94,56 @@ def verify_ticket(num: int) -> str:
             num: numero do bilhete
             pago: bool (0 = Não Pago / 1 = Pago)
     '''
+    num = int(input('Digite o numero do bilhete: '))
     pago = 'Pendente'
-    dados = db_num.get_by_number(num)
 
-    if dados[2] == 1:
-        pago = 'Aprovado'
+    if db_num.get_by_number(num)[0] != None:
+        dados = db_num.get_by_number(num)
+        
+        if dados[2] == 1:
+            pago = 'Aprovado'
 
-    return f'Nome: {db_pessoa.get_by_id(dados[0])[0][0]}\nNúmero: {dados[1]}\nPagamento: {pago}'
+        return f'Nome: {db_pessoa.get_by_id(dados[0])[0]}\nNúmero: {dados[1]}\nPagamento: {pago}'
+    
+    return f'Nome: {None}\nNúmero: {num}\nPagamento: {pago}'
 
-def get_all(nome: str, length=False) -> Union[list, bool]:
+def verify_person() -> Union[tuple, str]:
+    '''
+    verifica se a pessoa esta cadastrada no banco de dados
+
+    return:
+        se existir pessoa cadastrada com o mesmo nome, é retornada um iterável com os cadastro de mesmo nome
+        se não existir é retornado uma str com aviso de pessoa não cadastrada
+    '''
+    i = 0
+    nome = input('Digite o nome da pessoa: ')
+
+    for pessoa in db_pessoa.get_by_name(nome):
+        if nome in pessoa[i]:
+            return db_pessoa.get_by_name(nome)
+        i += 1
+    else:
+        return 'Pessoa não cadastrada'
+
+def get_all() -> Union[list, bool]:
     '''
     traz uma lista com todos os bilhetes adiquiridos pela pessoa
-
-    param:
-        nome: o nome da pessoa q adiquiriu o bilhete
-        len: indica se ira calcular o tamanho da lista (True) ou não (false: default)
 
     return:
         retorna uma lista de tuplas com os dados dos bilhetes, caso não exista essa pessoa retorna False
         se len = True retorna o tamanho da lista de bilhetes, se len = False retorna a própia lista
     '''
+    nome = input('Digite o nome: ')
+    print('Deseja saber a quantidade de bilhetes ou o numero dos bilhetes?')
+    print('[1] Quantidade\n[2] Numero dos bilhetes')
+    
+    escolha = int(input('--->'))
+
+    if escolha == 1:
+        length = True
+    else:
+        length = False
+
     for i in db_pessoa.get_all():
         if i[0] == nome:
             if not length:
@@ -144,7 +155,7 @@ def get_all(nome: str, length=False) -> Union[list, bool]:
 
     return False
 
-def update_ticket(num: int, group=False) -> bool:
+def update_ticket() -> bool:
     '''
     atualiza os dados de um bilhete, caso houver devolução ou pagamento de um bilhete não pago
 
@@ -154,14 +165,12 @@ def update_ticket(num: int, group=False) -> bool:
     return:
         retorna True quando a atualização é bem sucedida e False quando ocorre algum erro
     '''
-    bilhete = db_num.get_by_number(num)
     bilhetes = []
-
-    if group:
-        qnt_bilhetes = int(input('Digite a quantidade de bilhetes'))
-        for _ in range(qnt_bilhetes):
-            num_bilhetes = int(input('Digite o numero do bilhete: '))
-            bilhetes.append(num_bilhetes)
+    
+    qnt_bilhetes = int(input('Digite a quantidade de bilhetes: '))
+    for _ in range(qnt_bilhetes):
+        num_bilhetes = int(input('Digite o numero do bilhete: '))
+        bilhetes.append(num_bilhetes)
 
     print('O que deseja alterar?')
     print('[0] ID\n[1] PAGAMENTO\n[2] ID e PAGAMENTO')
@@ -171,70 +180,46 @@ def update_ticket(num: int, group=False) -> bool:
         if opcao == 0:
             nome = input('Digite o nome do novo dono: ')
             if db_pessoa.get_by_name(nome):
-                if not group:
-                    novo_id = db_pessoa.get_by_name(nome)[0][3]
-                    _, _, situacao = bilhete
-                    db_num.delete_number(num)
-                    novo_bilhete = novo_id, num, situacao
+                novo_id = db_pessoa.get_by_name(nome)[0][3]
+                for n in bilhetes:
+                    _, _, situacao = n
+                    db_num.delete_number(n)
+                    novo_bilhete = novo_id, n, situacao
                     db_num.insert_one(novo_bilhete)
 
-                    return True
-                else:
-                    novo_id = db_pessoa.get_by_name(nome)[0][3]
-                    _, _, situacao = bilhete
-                    for n in bilhetes:
-                        db_num.delete_number(n)
-                        novo_bilhete = novo_id, n, situacao
-                        db_num.insert_one(novo_bilhete)
-
-                    return True
+                return True
             return False
 
         elif opcao == 1:
             nova_situacao = int(input('Digite a nova situação do pagamento: '))
             if nova_situacao in [0, 1]:
-                if not group:
-                    id, _, _ = bilhete
-                    db_num.delete_number(num)
-                    novo_bilhete = id, num, nova_situacao
+                for n in bilhetes:
+                    id, _, _ = n
+                    db_num.delete_number(n)
+                    novo_bilhete = id, n, nova_situacao
                     db_num.insert_one(novo_bilhete)
 
-                    return True
-                else:
-                    id, _, _ = bilhete
-                    for n in bilhetes:
-                        db_num.delete_number(n)
-                        novo_bilhete = id, n, nova_situacao
-                        db_num.insert_one(novo_bilhete)
-
-                    return True
+                return True
             return False
 
         else:
             nome = input('Digite o nome do novo dono: ')
             nova_situacao = int(input('Digite a nova situação do pagamento: '))
             if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
-                if not group:
+                for n in bilhetes:
                     novo_id = db_pessoa.get_by_name(nome)[0][3]
-                    db_num.delete_number(num)
-                    novo_bilhete = novo_id, num, nova_situacao
+                    db_num.delete_number(n)
+                    novo_bilhete = novo_id, n, nova_situacao
                     db_num.insert_one(novo_bilhete)
 
-                    return True
-                else:
-                    for n in bilhetes:
-                        novo_id = db_pessoa.get_by_name(nome)[0][3]
-                        db_num.delete_number(n)
-                        novo_bilhete = novo_id, n, nova_situacao
-                        db_num.insert_one(novo_bilhete)
-
-                    return True
+                return True
             return False
 
     return False
 
-def update_pessoa(id: int) -> Union[tuple, bool]:
-    nome, tel, email, _ = db_pessoa.get_by_id(id)
+def update_pessoa() -> Union[tuple, bool]:
+    nome = input('Digite o nome da pessoa: ')
+    _, tel, email, id = db_pessoa.get_by_name(nome)
     print('O que deseja mudar?')
     print('[0] NOME\n[1] telefone\n[2] email\n[3] TUDO')
     opcao = int(input('--->'))
