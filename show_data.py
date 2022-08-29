@@ -1,4 +1,5 @@
 from functions import (
+    check_pessoa,
     count_tickets,
     verify_ticket,
     verify_person,
@@ -12,14 +13,15 @@ def menu():
         print('O QUE DESEJA SABER?')
         print('[1] Situação do bilhete')
         print('[2] Checar cadastro de pessoa')
-        print('[3] Checar bilhetes pegos por pessoa')
-        print('[4] Bilhetes entregues')
-        print('[5] Bilhetes pagos')
-        print('\n[6] Sair')
+        print('[3] Checar nomes pela letra')
+        print('[4] Checar bilhetes pegos por pessoa')
+        print('[5] Bilhetes entregues')
+        print('[6] Bilhetes pagos')
+        print('\n[7] Sair')
 
         opcao = int(input('--->'))
 
-        if opcao == 6:
+        if opcao == 7:
             break
         elif opcao == 1:
             sys('cls')
@@ -29,10 +31,13 @@ def menu():
             print(verify_person())
         elif opcao == 3:
             sys('cls')
-            print(get_all())
+            print(check_pessoa())
         elif opcao == 4:
             sys('cls')
-            print(count_tickets())
+            print(get_all())
         elif opcao == 5:
+            sys('cls')
+            print(count_tickets())
+        elif opcao == 6:
             sys('cls')
             print(count_tickets(pagos=True))

@@ -29,7 +29,7 @@ def select_ticket() -> bool:
     '''
     nome = input('Digite o nome da pessoa: ')
     
-    if nome in db_pessoa.get_by_name(nome):
+    if nome in db_pessoa.get_by_name(nome)[0]:
         id = db_pessoa.get_by_name(nome)[0][3]
         bilhetes = []
         num_bilhetes = int(input('Digite a quantidade de bilhetes: '))
@@ -47,6 +47,7 @@ def select_ticket() -> bool:
                     print('Bilhete cadastrado com sucesso')
                 else:
                     print('Número ja escolhido')
+                    continuar = input('Aperte qualquer tecla para continuar--->')
                     return False
         else:
             return False
@@ -60,6 +61,7 @@ def select_ticket() -> bool:
         else:
             return False
     
+    continuar = input('Aperte qualquer tecla para continuar--->')
     return True
 
 def count_tickets(pagos=False) -> int:
@@ -155,6 +157,22 @@ def get_all() -> Union[list, bool]:
 
     return False
 
+def check_pessoa():
+    '''
+    
+    '''
+    total = []
+    nome = input('Digite o nome: ')
+
+    for i in db_pessoa.get_all():
+        nome_db = i[0]
+        for l in nome_db:
+            if nome[0] == l:
+                total.append(nome_db)
+            break
+
+    return total
+
 def update_ticket() -> bool:
     '''
     atualiza os dados de um bilhete, caso houver devolução ou pagamento de um bilhete não pago
@@ -182,7 +200,7 @@ def update_ticket() -> bool:
             if db_pessoa.get_by_name(nome):
                 novo_id = db_pessoa.get_by_name(nome)[0][3]
                 for n in bilhetes:
-                    _, _, situacao = n
+                    _, _, situacao = db_num.get_by_number(n)
                     db_num.delete_number(n)
                     novo_bilhete = novo_id, n, situacao
                     db_num.insert_one(novo_bilhete)
@@ -194,7 +212,7 @@ def update_ticket() -> bool:
             nova_situacao = int(input('Digite a nova situação do pagamento: '))
             if nova_situacao in [0, 1]:
                 for n in bilhetes:
-                    id, _, _ = n
+                    id, _, _ = db_num.get_by_number(n)
                     db_num.delete_number(n)
                     novo_bilhete = id, n, nova_situacao
                     db_num.insert_one(novo_bilhete)
@@ -219,7 +237,7 @@ def update_ticket() -> bool:
 
 def update_pessoa() -> Union[tuple, bool]:
     nome = input('Digite o nome da pessoa: ')
-    _, tel, email, id = db_pessoa.get_by_name(nome)
+    _, tel, email, id = db_pessoa.get_by_name(nome)[0]
     print('O que deseja mudar?')
     print('[0] NOME\n[1] telefone\n[2] email\n[3] TUDO')
     opcao = int(input('--->'))
