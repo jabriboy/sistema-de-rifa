@@ -159,7 +159,10 @@ def get_all() -> Union[list, bool]:
 
 def check_pessoa():
     '''
-    
+    busca no banco de dados pessoas cadastradas pela inicial do nome
+
+    return:
+        retorna uma lista com todos os nomes com a inicial desejada
     '''
     total = []
     nome = input('Digite o nome: ')

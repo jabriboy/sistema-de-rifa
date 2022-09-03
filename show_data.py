@@ -41,3 +41,4 @@ def menu():
         elif opcao == 6:
             sys('cls')
             print(count_tickets(pagos=True))
+            
