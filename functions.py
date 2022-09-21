@@ -239,6 +239,9 @@ def update_ticket() -> bool:
     return False
 
 def update_pessoa() -> Union[tuple, bool]:
+    '''
+    Atualiza uma ou mais informações de uma pessoa
+    '''
     nome = input('Digite o nome da pessoa: ')
     _, tel, email, id = db_pessoa.get_by_name(nome)[0]
     print('O que deseja mudar?')

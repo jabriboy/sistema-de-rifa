@@ -37,11 +37,11 @@ def get_by_number(rifa_num: int):
     c.execute("SELECT * FROM pessoa_database WHERE numbers = :numbers", {'numbers': rifa_num})
     return c.fetchone()
 
-def delete_by_name(person_name):
+def delete_by_name(person_name: str):
     with conn:
         c.execute("DELETE from pessoa_database WHERE name = :name", {'name': person_name})
 
-def delete_by_id(person_id):
+def delete_by_id(person_id: int):
     with conn:
         c.execute("DELETE from pessoa_database WHERE id = :id", {'id': person_id})
 
