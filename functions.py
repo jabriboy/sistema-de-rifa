@@ -29,7 +29,7 @@ def select_ticket() -> bool:
     '''
     nome = input('Digite o nome da pessoa: ')
     
-    if nome in db_pessoa.get_by_name(nome)[0]:
+    if db_pessoa.get_by_name(nome):
         id = db_pessoa.get_by_name(nome)[0][3]
         bilhetes = []
         num_bilhetes = int(input('Digite a quantidade de bilhetes: '))
@@ -52,12 +52,10 @@ def select_ticket() -> bool:
         else:
             return False
     else:
-        print('pessoa não cadastrada')
-        print('deseja criar um novo cadastro?')
-        print('[1] SIM\n[2] NÃO')
-        continuar = int(input('--->'))
-        if continuar == 1:
+        continuar = int(input("Pessoa não cadastrada, deseja cadastrar? [1] sim | [0] não: "))
+        if(continuar == 1):
             create_person()
+            select_ticket()
         else:
             return False
     
@@ -159,22 +157,20 @@ def get_all() -> Union[list, bool]:
 
 def check_pessoa():
     '''
-    busca no banco de dados pessoas cadastradas pela inicial do nome
+    busca no banco de dados pessoas cadastradas pelo prefixo
 
     return:
         retorna uma lista com todos os nomes com a inicial desejada
     '''
     total = []
+    for x in db_pessoa.get_all():
+        total.append(x[0])
+
     nome = input('Digite o nome: ')
 
-    for i in db_pessoa.get_all():
-        nome_db = i[0]
-        for l in nome_db:
-            if nome[0] == l:
-                total.append(nome_db)
-            break
+    prefixo = [ s for s in total if s.startswith(nome) ]
 
-    return total
+    return prefixo
 
 def update_ticket() -> bool:
     '''
@@ -209,7 +205,24 @@ def update_ticket() -> bool:
                     db_num.insert_one(novo_bilhete)
 
                 return True
-            return False
+            else:
+                continuar = int(input("Pessoa não cadastrada, deseja cadastrar? [1] sim | [0] não: "))
+                if(continuar == 1):
+                    create_person()
+                    nome = input('Digite o nome do novo dono: ')
+                    if db_pessoa.get_by_name(nome):
+                        novo_id = db_pessoa.get_by_name(nome)[0][3]
+                        for n in bilhetes:
+                            _, _, situacao = db_num.get_by_number(n)
+                            db_num.delete_number(n)
+                            novo_bilhete = novo_id, n, situacao
+                            db_num.insert_one(novo_bilhete)
+
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
 
         elif opcao == 1:
             nova_situacao = int(input('Digite a nova situação do pagamento: '))
@@ -234,6 +247,38 @@ def update_ticket() -> bool:
                     db_num.insert_one(novo_bilhete)
 
                 return True
+            elif db_pessoa.get_by_name(nome) == None:
+                continuar = int(input("Pessoa não cadastrada, deseja cadastrar? [1] sim | [0] não: "))
+                if(continuar == 1):
+                    create_person()
+                    nome = input('Digite o nome do novo dono: ')
+                    if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
+                        for n in bilhetes:
+                            novo_id = db_pessoa.get_by_name(nome)[0][3]
+                            db_num.delete_number(n)
+                            novo_bilhete = novo_id, n, nova_situacao
+                            db_num.insert_one(novo_bilhete)
+
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+            else:
+                nova_situacao = int(input('Digite a nova situação do pagamento: '))
+                if nova_situacao in [0, 1]:
+                    if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
+                        for n in bilhetes:
+                            novo_id = db_pessoa.get_by_name(nome)[0][3]
+                            db_num.delete_number(n)
+                            novo_bilhete = novo_id, n, nova_situacao
+                            db_num.insert_one(novo_bilhete)
+
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
             return False
 
     return False

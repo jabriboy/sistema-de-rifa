@@ -27,7 +27,7 @@ def insert_one(person: list) -> bool:
 
 def get_by_name(name: str):
     c.execute("SELECT * FROM pessoa_database WHERE name = :name", {'name': name})
-    return c.fetchall()
+    return c.fetchone()
 
 def get_by_id(id: int):
     c.execute("SELECT * FROM pessoa_database WHERE id = :id", {'id': id})
@@ -53,3 +53,4 @@ def get_all():
 
 if __name__ == '__main__':
     print(__doc__)
+    print(get_by_name('dsui'))
