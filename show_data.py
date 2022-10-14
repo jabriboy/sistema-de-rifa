@@ -13,7 +13,7 @@ def menu():
         print('O QUE DESEJA SABER?')
         print('[1] Situação do bilhete')
         print('[2] Checar cadastro de pessoa')
-        print('[3] Checar nomes pela letra')
+        print('[3] Checar nomes pelas iniciais (prefixo)')
         print('[4] Checar bilhetes pegos por pessoa')
         print('[5] Bilhetes entregues')
         print('[6] Bilhetes pagos')

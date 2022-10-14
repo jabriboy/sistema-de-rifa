@@ -157,22 +157,20 @@ def get_all() -> Union[list, bool]:
 
 def check_pessoa():
     '''
-    busca no banco de dados pessoas cadastradas pela inicial do nome
+    busca no banco de dados pessoas cadastradas pelo prefixo
 
     return:
         retorna uma lista com todos os nomes com a inicial desejada
     '''
     total = []
+    for x in db_pessoa.get_all():
+        total.append(x[0])
+
     nome = input('Digite o nome: ')
 
-    for i in db_pessoa.get_all():
-        nome_db = i[0]
-        for l in nome_db:
-            if nome[0] == l:
-                total.append(nome_db)
-            break
+    prefixo = [ s for s in total if s.startswith(nome) ]
 
-    return total
+    return prefixo
 
 def update_ticket() -> bool:
     '''
