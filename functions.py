@@ -30,7 +30,7 @@ def select_ticket() -> bool:
     nome = input('Digite o nome da pessoa: ')
     
     if db_pessoa.get_by_name(nome):
-        id = db_pessoa.get_by_name(nome)[0][3]
+        id = db_pessoa.get_by_name(nome)[3]
         bilhetes = []
         num_bilhetes = int(input('Digite a quantidade de bilhetes: '))
         for i in range(num_bilhetes):
@@ -56,6 +56,7 @@ def select_ticket() -> bool:
         if(continuar == 1):
             create_person()
             select_ticket()
+            return True
         else:
             return False
     
@@ -118,12 +119,8 @@ def verify_person() -> Union[tuple, str]:
     i = 0
     nome = input('Digite o nome da pessoa: ')
 
-    for pessoa in db_pessoa.get_by_name(nome):
-        if nome in pessoa[i]:
-            return db_pessoa.get_by_name(nome)
-        i += 1
-    else:
-        return 'Pessoa não cadastrada'
+    
+    return db_pessoa.get_by_name(nome)
 
 def get_all() -> Union[list, bool]:
     '''
@@ -147,10 +144,10 @@ def get_all() -> Union[list, bool]:
     for i in db_pessoa.get_all():
         if i[0] == nome:
             if not length:
-                dados = db_num.get_by_id(db_pessoa.get_by_name(nome)[0][3])
+                dados = db_num.get_by_id(db_pessoa.get_by_name(nome)[3])
                 return dados
             else:
-                dados = len(db_num.get_by_id(db_pessoa.get_by_name(nome)[0][3]))
+                dados = len(db_num.get_by_id(db_pessoa.get_by_name(nome)[3]))
                 return dados
 
     return False
@@ -197,7 +194,7 @@ def update_ticket() -> bool:
         if opcao == 0:
             nome = input('Digite o nome do novo dono: ')
             if db_pessoa.get_by_name(nome):
-                novo_id = db_pessoa.get_by_name(nome)[0][3]
+                novo_id = db_pessoa.get_by_name(nome)[3]
                 for n in bilhetes:
                     _, _, situacao = db_num.get_by_number(n)
                     db_num.delete_number(n)
@@ -211,7 +208,7 @@ def update_ticket() -> bool:
                     create_person()
                     nome = input('Digite o nome do novo dono: ')
                     if db_pessoa.get_by_name(nome):
-                        novo_id = db_pessoa.get_by_name(nome)[0][3]
+                        novo_id = db_pessoa.get_by_name(nome)[3]
                         for n in bilhetes:
                             _, _, situacao = db_num.get_by_number(n)
                             db_num.delete_number(n)
@@ -241,7 +238,7 @@ def update_ticket() -> bool:
             nova_situacao = int(input('Digite a nova situação do pagamento: '))
             if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
                 for n in bilhetes:
-                    novo_id = db_pessoa.get_by_name(nome)[0][3]
+                    novo_id = db_pessoa.get_by_name(nome)[3]
                     db_num.delete_number(n)
                     novo_bilhete = novo_id, n, nova_situacao
                     db_num.insert_one(novo_bilhete)
@@ -254,7 +251,7 @@ def update_ticket() -> bool:
                     nome = input('Digite o nome do novo dono: ')
                     if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
                         for n in bilhetes:
-                            novo_id = db_pessoa.get_by_name(nome)[0][3]
+                            novo_id = db_pessoa.get_by_name(nome)[3]
                             db_num.delete_number(n)
                             novo_bilhete = novo_id, n, nova_situacao
                             db_num.insert_one(novo_bilhete)
@@ -269,7 +266,7 @@ def update_ticket() -> bool:
                 if nova_situacao in [0, 1]:
                     if db_pessoa.get_by_name(nome) and nova_situacao in [0, 1]:
                         for n in bilhetes:
-                            novo_id = db_pessoa.get_by_name(nome)[0][3]
+                            novo_id = db_pessoa.get_by_name(nome)[3]
                             db_num.delete_number(n)
                             novo_bilhete = novo_id, n, nova_situacao
                             db_num.insert_one(novo_bilhete)
@@ -288,7 +285,7 @@ def update_pessoa() -> Union[tuple, bool]:
     Atualiza uma ou mais informações de uma pessoa
     '''
     nome = input('Digite o nome da pessoa: ')
-    _, tel, email, id = db_pessoa.get_by_name(nome)[0]
+    _, tel, email, id = db_pessoa.get_by_name(nome)
     print('O que deseja mudar?')
     print('[0] NOME\n[1] telefone\n[2] email\n[3] TUDO')
     opcao = int(input('--->'))
